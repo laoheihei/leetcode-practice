@@ -1,2 +1,12 @@
 # Project exclude paths
 /target/
+.idea/$CACHE_FILE$
+.idea/.gitignore
+.idea/compiler.xml
+.idea/dictionaries
+.idea/encodings.xml
+.idea/inspectionProfiles/
+.idea/jarRepositories.xml
+.idea/misc.xml
+.idea/uiDesigner.xml
+leetcode-practice.iml
