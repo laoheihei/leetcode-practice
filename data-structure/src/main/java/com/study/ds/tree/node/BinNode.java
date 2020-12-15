@@ -7,69 +7,11 @@ package com.study.ds.tree.node;
  */
 
 public class BinNode<T> implements Node {
-	public static boolean isRoot(BinNode node) {
-		return node.parent == null;
-	}
-
-	public static boolean isLeftChild(BinNode node) {
-		return !isRoot(node) && (node.parent.lChild == node);
-	}
-
-	public static boolean isRightChild(BinNode node) {
-		return !isRoot(node) && (node.parent.rChild == node);
-	}
-
-	public static boolean hasParent(BinNode node) {
-		return !isRoot(node);
-	}
-
-	public static boolean hasLChild(BinNode node) {
-		return node.lChild != null;
-	}
-
-	public static boolean hasRChild(BinNode node) {
-		return node.rChild != null;
-	}
-
-	public static boolean hasChild(BinNode node) {
-		return hasLChild(node) || hasRChild(node);
-	}
-
-	public static boolean hasBothChild(BinNode node) {
-		return hasLChild(node) && hasRChild(node);
-	}
-
-	public static boolean isLeaf(BinNode node) {
-		return !hasChild(node);
-	}
-
-	// 兄弟
-	public static BinNode sibling(BinNode node) {
-		return isLeftChild(node) ?
-				node.parent.rChild :
-				node.parent.lChild;
-	}
-
-	// 叔叔
-	public static BinNode uncle(BinNode node) {
-		return isLeftChild(node.parent) ?
-				node.parent.parent.rChild :
-				node.parent.parent.lChild;
-	}
-
-	/**
-	 * 返回节点高度，如果node == null，node.height = -1;
-	 * @return
-	 */
-	public static int getNodeHeight(Node node) {
-		return node == null ? -1 : node.height();
-	}
-
 	protected T data;
 
-	protected BinNode<T> parent, lChild, rChild;
+	protected BinNode<T> parent, leftChild, rightChild;
 
-	// 高度
+	// 节点高度，无孩子的节点高度为0
 	protected int height;
 
 	// Null Path Length（左式堆，也可以用height代替）
@@ -80,31 +22,44 @@ public class BinNode<T> implements Node {
 		this.parent = parent;
 	}
 
+	public BinNode(T data) {
+		this.data = data;
+	}
+
 	/**
 	 * @description 统计以当前节点为根的树中包含的节点数量
 	 * @return 节点总数
 	 */
+	@Override
 	public int size() {
 		int size = 1;
-		if (this.lChild != null) { size += lChild.size(); }
-		if (this.rChild != null) { size += rChild.size(); }
+		if (this.leftChild != null) { size += leftChild.size(); }
+		if (this.rightChild != null) { size += rightChild.size(); }
 
 		return size;
 	}
 
-	public int height() {
-
-	}
-
+	/**
+	 *
+	 * @param data
+	 * @return 返回被插入的新节点
+	 */
 	public BinNode<T> insertAsLC(T data) {
-		this.lChild = new BinNode<T>(data, this);
-		return this.lChild;
+		this.leftChild = new BinNode<T>(data, this);
+		return this.leftChild;
 	}
 
+	/**
+	 *
+	 * @param data
+	 * @return 返回被插入的新节点
+	 */
 	public BinNode<T> insertAsRC(T data) {
-		this.rChild = new BinNode<T>(data, this);
-		return this.rChild;
+		this.rightChild = new BinNode<T>(data, this);
+		return this.rightChild;
 	}
+
+	/******************************************************************************************************************/
 
 	/**
 	 * 当前节点的直接后继
@@ -114,9 +69,9 @@ public class BinNode<T> implements Node {
 		BinNode<T> succ = null;
 		// 1、node有右子树
 		if (hasRChild(node)) {
-			succ = node.rChild;
+			succ = node.rightChild;
 			while (hasLChild(succ)) {
-				succ = succ.lChild;
+				succ = succ.leftChild;
 			}
 
 			return succ;
@@ -135,6 +90,92 @@ public class BinNode<T> implements Node {
 		return null;
 	}
 
+	/**
+	 * 返回节点高度，如果node == null，node.height = -1;
+	 * @return
+	 */
+	public static int getNodeHeight(Node node) {
+		return node == null ? -1 : node.getHeight();
+	}
+
+	public static void attachParentLeftChildLink(BinNode parent, BinNode leftChild) {
+		parent.leftChild = leftChild;
+		leftChild.parent = parent;
+	}
+
+	public static void attachParentRightChildLink(BinNode parent, BinNode rightChild) {
+		parent.rightChild = rightChild;
+		rightChild.parent = parent;
+	}
+
+	public static void cutParentChildLink(BinNode child) {
+		if (!hasParent(child)) {
+			return;
+		}
+
+		if (isLeftChild(child)) {
+			child.parent.leftChild = null;
+		} else {
+			child.parent.rightChild = null;
+		}
+
+		child.parent = null;
+	}
+
+
+
+	public static boolean isRoot(BinNode node) {
+		return node.parent == null;
+	}
+
+	public static boolean isLeftChild(BinNode node) {
+		return !isRoot(node) && (node.parent.leftChild == node);
+	}
+
+	public static boolean isRightChild(BinNode node) {
+		return !isRoot(node) && (node.parent.rightChild == node);
+	}
+
+	public static boolean hasParent(BinNode node) {
+		return !isRoot(node);
+	}
+
+	public static boolean hasLChild(BinNode node) {
+		return node.leftChild != null;
+	}
+
+	public static boolean hasRChild(BinNode node) {
+		return node.rightChild != null;
+	}
+
+	public static boolean hasChild(BinNode node) {
+		return hasLChild(node) || hasRChild(node);
+	}
+
+	public static boolean hasBothChild(BinNode node) {
+		return hasLChild(node) && hasRChild(node);
+	}
+
+	public static boolean isLeaf(BinNode node) {
+		return !hasChild(node);
+	}
+
+	// 兄弟
+	public static BinNode sibling(BinNode node) {
+		return isLeftChild(node) ?
+				node.parent.rightChild :
+				node.parent.leftChild;
+	}
+
+	// 叔叔
+	public static BinNode uncle(BinNode node) {
+		return isLeftChild(node.parent) ?
+				node.parent.parent.rightChild :
+				node.parent.parent.leftChild;
+	}
+
+	/******************************************************************************************************************/
+
 	public T getData() {
 		return data;
 	}
@@ -151,22 +192,23 @@ public class BinNode<T> implements Node {
 		this.parent = parent;
 	}
 
-	public BinNode<T> getlChild() {
-		return lChild;
+	public BinNode<T> getLeftChild() {
+		return leftChild;
 	}
 
-	public void setlChild(BinNode<T> lChild) {
-		this.lChild = lChild;
+	public void setLeftChild(BinNode<T> leftChild) {
+		this.leftChild = leftChild;
 	}
 
-	public BinNode<T> getrChild() {
-		return rChild;
+	public BinNode<T> getRightChild() {
+		return rightChild;
 	}
 
-	public void setrChild(BinNode<T> rChild) {
-		this.rChild = rChild;
+	public void setRightChild(BinNode<T> rightChild) {
+		this.rightChild = rightChild;
 	}
 
+	@Override
 	public int getHeight() {
 		return height;
 	}

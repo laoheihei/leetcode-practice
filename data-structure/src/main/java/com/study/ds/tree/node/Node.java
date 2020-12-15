@@ -16,5 +16,5 @@ public interface Node {
 	 * 统计当前节点的高度
 	 * @return
 	 */
-	int height();
+	int getHeight();
 }
