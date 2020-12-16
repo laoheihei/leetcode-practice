@@ -6,20 +6,32 @@ package com.study.ds.tree.node;
  * @date 2020/12/7 14:05
  */
 
-public class BinNode<T> implements Node {
+public class BinNode<T extends Comparable<T>> implements Node {
 	protected T data;
 
 	protected BinNode<T> parent, leftChild, rightChild;
 
 	// 节点高度，无孩子的节点高度为0
-	protected int height;
+	protected int height = 0;
 
 	// Null Path Length（左式堆，也可以用height代替）
-	protected int npl;
+	protected int npl = 1;
 
-	public BinNode(T data, BinNode parent) {
+	/**
+	 * 初始化node节点，并构建单向联结（孩子节点的父联结）
+	 * @param data
+	 * @param parent
+	 */
+	public BinNode(T data, BinNode<T> parent) {
 		this.data = data;
 		this.parent = parent;
+
+		int compare = data.compareTo(parent.getData());
+		if (compare < 0) {
+			parent.leftChild = this;
+		} else {
+			parent.rightChild = this;
+		}
 	}
 
 	public BinNode(T data) {
@@ -65,7 +77,7 @@ public class BinNode<T> implements Node {
 	 * 当前节点的直接后继
 	 * @return
 	 */
-	public static <T> BinNode<T> succ(BinNode<T> node) {
+	public static <T extends Comparable<T>> BinNode<T> succ(BinNode<T> node) {
 		BinNode<T> succ = null;
 		// 1、node有右子树
 		if (hasRChild(node)) {
@@ -161,17 +173,23 @@ public class BinNode<T> implements Node {
 	}
 
 	// 兄弟
-	public static BinNode sibling(BinNode node) {
+	public static <T extends Comparable<T>> BinNode<T> sibling(BinNode<T> node) {
 		return isLeftChild(node) ?
 				node.parent.rightChild :
 				node.parent.leftChild;
 	}
 
 	// 叔叔
-	public static BinNode uncle(BinNode node) {
+	public static <T extends Comparable<T>> BinNode<T> uncle(BinNode<T> node) {
 		return isLeftChild(node.parent) ?
 				node.parent.parent.rightChild :
 				node.parent.parent.leftChild;
+	}
+
+	public static <T extends Comparable<T>> void swapData(BinNode<T> node1, BinNode<T> node2) {
+		T temp = node1.getData();
+		node1.setData(node2.getData());
+		node2.setData(temp);
 	}
 
 	/******************************************************************************************************************/
