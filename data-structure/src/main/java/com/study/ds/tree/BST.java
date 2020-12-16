@@ -52,37 +52,24 @@ public abstract class BST<T extends Comparable<T>> extends BinTree<T> {
 	public boolean remove(T data) {
 		BinNode<T> search = search(data);
 		if (search == null) { return false; }
-
+		BinNode<T> succ = removeAt(search, _hot);
+		updateHeightAbove(succ.getParent());
 		_size--;
-		// 1、无孩子节点
-		if (!BinNode.hasChild(search)) {
-			BinNode.cutParentChildLink(search);
-		}
 
-		// 2、有 1 个孩子节点
-		if (!BinNode.hasBothChild(search)) {
-
-		}
-
-		// 3、有 2 个孩子节点
-		if (BinNode.hasBothChild(search)) {
-
-		}
-
-		updateHeightAbove(_hot);
 		return true;
 	}
 
 	/**
+	 * 流程：
+	 *  1、找到被删除节点的接替者 succ 节点；
+	 *  2、建立 hot 节点和 succ 节点的联系；
 	 *
 	 * @param removeNode
 	 * @param hot remove节点的父节点
 	 * @param <T>
 	 * @return
 	 */
-	public static <T extends Comparable<T>> BinNode<T> removeAt(BinNode<T> removeNode, BinNode<T> hot) {
-		// 实际被删除节点，初值为remove
-		BinNode<T> w = removeNode;
+	public static <T extends Comparable<T>>BinNode<T> removeAt(BinNode<T> removeNode, BinNode<T> hot) {
 		// 被删除节点的接替者
 		BinNode<T> succ = null;
 		// 1、左子树为空
@@ -91,23 +78,25 @@ public abstract class BST<T extends Comparable<T>> extends BinTree<T> {
 		// 2、左子树不为空，右子树为空
 		} else if (!BinNode.hasRChild(removeNode)) {
 			succ = removeNode.getLeftChild();
-		// 3、左右子树都存在
+		// 3、左右子树都存在，使用removeNode的后继来替代
 		} else {
-			w = BinNode.succ(w);
-			BinNode.swapData(w, removeNode);
-			succ = w.getRightChild();
-
-			// 隔离节点w
-			BinNode<T> u = w.getParent();
-			if (u == removeNode) {
-				u.setRightChild(w.getRightChild());
-			} else {
-				u.setLeftChild(w.getRightChild());
-			}
+			BinNode<T> temp = removeNode;
+			removeNode = BinNode.succ(removeNode);
+			BinNode.swapData(temp, removeNode);
+			succ = removeNode.getRightChild();
 		}
 
-		hot = w.getParent();  // 记录实际被删除节点的父亲节点
+		// 建立新的父子链接
+		hot = removeNode.getParent();
+		if (hot != null) {
+			if (BinNode.isRightChild(removeNode)) {
+				hot.setRightChild(succ);
+			} else {
+				hot.setLeftChild(succ);
+			}
+		}
 		if (succ != null) { succ.setParent(hot); }
+
 		return succ;
 	}
 
