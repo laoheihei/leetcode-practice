@@ -12,13 +12,14 @@ public class BST<T extends Comparable<T>> extends BinTree<T> {
 	 * @return
 	 */
 	public BinNode<T> search(T data) {
-		return searchIn(_root, data, null);
+		this._hot = null;
+		return searchIn(_root, data);
 	}
 
 	/**
 	 * 插入
 	 * @param data
-	 * @return
+	 * @return 返回新插入节点
 	 */
 	public BinNode<T> insert(T data) {
 		BinNode<T> ret = search(data);
@@ -38,10 +39,10 @@ public class BST<T extends Comparable<T>> extends BinTree<T> {
 	public boolean remove(T data) {
 		BinNode<T> search = search(data);
 		if (search == null) { return false; }
-		removeAt(search, this);
-		updateHeightAbove(this._hot);
-		_size--;
 
+		removeAt(search, this);
+		_size--;
+		updateHeightAbove(this._hot);
 		return true;
 	}
 
@@ -107,14 +108,13 @@ public class BST<T extends Comparable<T>> extends BinTree<T> {
 	 * 流程：
 	 *  1、找到被删除节点的接替者 succ 节点；
 	 *  2、建立 hot 节点和 succ 节点的联系；
-	 *  3、更新节点高度；
 	 *
 	 * @param removeNode
 	 * @param tree 用于传递tree._hot节点
-	 * @param <T>
+	 * @param
 	 * @return
 	 */
-	public static <T extends Comparable<T>>BinNode<T> removeAt(BinNode<T> removeNode, BST<T> tree) {
+	protected BinNode<T> removeAt(BinNode<T> removeNode, BST<T> tree) {
 		// 被删除节点的接替者
 		BinNode<T> succ = null;
 		// 1、找到被删除节点的接替者 succ 节点；
@@ -132,17 +132,9 @@ public class BST<T extends Comparable<T>> extends BinTree<T> {
 			succ = removeNode.getRightChild();
 		}
 
-		// 2、建立新的父子链接
-		BinNode<T> hot = tree._hot;
-		hot = removeNode.getParent();
-		if (hot != null) {
-			if (BinNode.isRightChild(removeNode)) {
-				hot.setRightChild(succ);
-			} else {
-				hot.setLeftChild(succ);
-			}
-		}
-		if (succ != null) { succ.setParent(hot); }
+		// 2、更新_hot节点，建立新的父子链接
+		tree._hot = removeNode.getParent();
+		BinNode.replaceParentChildLink(removeNode, succ);
 
 		return succ;
 	}
@@ -151,20 +143,18 @@ public class BST<T extends Comparable<T>> extends BinTree<T> {
 	 * 在子树 node 中查找 data节点
 	 * @param node
 	 * @param data
-	 * @param hot
-	 * @param <T>
 	 * @return 未找到，返回null；此时_hot节点为
 	 */
-	public static <T extends Comparable<T>> BinNode<T> searchIn(BinNode<T> node, T data, BinNode<T> hot) {
+	protected BinNode<T> searchIn(BinNode<T> node, T data) {
 		if (node == null || node.getData().equals(data)) { return node; }
 
-		hot = node;
+		this._hot = node;
 
-		int compare = node.getData().compareTo(data);
+		int compare = data.compareTo(node.getData());
 		if (compare < 0) {
-			return searchIn(node.getRightChild(), data, hot);
+			return searchIn(node.getLeftChild(), data);
 		} else {
-			return searchIn(node.getLeftChild(), data, hot);
+			return searchIn(node.getRightChild(), data);
 		}
 	}
 

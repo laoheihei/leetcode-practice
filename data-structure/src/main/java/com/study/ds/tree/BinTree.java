@@ -14,7 +14,7 @@ public class BinTree<T extends Comparable<T>> {
 	protected BinNode<T> _root;
 
 	/**
-	 * 更新node节点的高度
+	 * 更新二叉树节点node的高度
 	 * @param node
 	 * @return
 	 */
@@ -26,20 +26,22 @@ public class BinTree<T extends Comparable<T>> {
 	}
 
 	/**
-	 * 更新节点x及其祖先的高度；一旦node的高度不变，即可终止更新
+	 * 更新二叉树节点node及其祖先的高度；一旦node的高度不变，即可终止更新
 	 * @param node
 	 */
 	public static void updateHeightAbove(BinNode node) {
 		while (node != null) {
-			// int previousHeight = node.getHeight();
+			int previousHeight = node.getHeight();
 			updateHeight(node);
-			// if (node.getHeight() == previousHeight) {
-			// 	break;
-			// }
+			if (node.getHeight() == previousHeight) {
+				break;
+			}
 
 			node = node.getParent();
 		}
 	}
+
+	/******************************************************************************************************************/
 
 	/**
 	 * 将data当做根节点插入二叉树，返回树中新插入的节点
@@ -136,7 +138,7 @@ public class BinTree<T extends Comparable<T>> {
 	public int removeAt(BinNode<T> node) {
 		if (node == null) { return 0; }
 
-		int n = 1 + removeAt(node.getLeftChild()) +removeAt( node.getRightChild());
+		int n = 1 + removeAt(node.getLeftChild()) +removeAt(node.getRightChild());
 		node.setData(null);
 		return n;
 	}

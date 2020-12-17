@@ -127,12 +127,14 @@ public class BinNode<T extends Comparable<T>> implements Node {
 			return;
 		}
 
+		// 1、断开 父 ——>子 链接
 		if (isLeftChild(child)) {
 			child.parent.leftChild = null;
 		} else {
 			child.parent.rightChild = null;
 		}
 
+		// 2、断开 子 ——>父 链接
 		child.parent = null;
 	}
 
@@ -144,10 +146,10 @@ public class BinNode<T extends Comparable<T>> implements Node {
 	public static void replaceParentChildLink(BinNode previousChild, BinNode currentChild) {
 		// 1、建立 子——>父 链接
 		BinNode parent = previousChild.getParent();
-		currentChild.setParent(parent);
-		if (parent == null) { return; }
+		if (currentChild != null) { currentChild.setParent(parent); }
 
 		// 2、建立 父——>子 链接
+		if (parent == null) { return; }
 		if (isLeftChild(previousChild)) {
 			parent.setLeftChild(currentChild);
 		} else {
