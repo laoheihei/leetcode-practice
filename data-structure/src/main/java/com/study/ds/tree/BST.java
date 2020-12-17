@@ -2,23 +2,9 @@ package com.study.ds.tree;
 
 import com.study.ds.tree.node.BinNode;
 
-public abstract class BST<T extends Comparable<T>> extends BinTree<T> {
+public class BST<T extends Comparable<T>> extends BinTree<T> {
 	// BST:search()最后访问的非空（除非树空）的节点位置
 	protected BinNode<T> _hot;
-
-	/**
-	 * 按照 “3 + 4” 结构，联结 3 个节点和 4 颗子树
-	 * @param a1
-	 * @param a2
-	 * @param a3
-	 * @param b1
-	 * @param b2
-	 * @param b3
-	 * @param b4
-	 * @return
-	 */
-	abstract BinNode<T> connect34(BinNode<T> a1, BinNode<T> a2, BinNode<T> a3,
-	                     BinNode<T> b1, BinNode<T> b2, BinNode<T> b3, BinNode<T> b4);
 
 	/**
 	 * 查找
@@ -52,17 +38,31 @@ public abstract class BST<T extends Comparable<T>> extends BinTree<T> {
 	public boolean remove(T data) {
 		BinNode<T> search = search(data);
 		if (search == null) { return false; }
-		BinNode<T> succ = removeAt(search, _hot);
-		updateHeightAbove(succ.getParent());
+		removeAt(search, _hot);
+		// succ可能为 null，所以将updateHeightAbove的调用移植removeAt()方法中
+		// updateHeightAbove(succ.getParent());
 		_size--;
 
 		return true;
 	}
 
 	/**
+	 * BST节点旋转变换统一算法（3+4），返回调整之后局部子树根节点的位置
+	 * @param node node为非空的孙辈节点
+	 * @return
+	 */
+	public BinNode<T> rotateAt(BinNode<T> node) {
+		BinNode<T> parent = node.getParent();
+		BinNode<T> grantParent = parent.getParent();
+
+		return null;
+	}
+
+	/**
 	 * 流程：
 	 *  1、找到被删除节点的接替者 succ 节点；
 	 *  2、建立 hot 节点和 succ 节点的联系；
+	 *  3、更新节点高度；
 	 *
 	 * @param removeNode
 	 * @param hot remove节点的父节点
@@ -72,13 +72,14 @@ public abstract class BST<T extends Comparable<T>> extends BinTree<T> {
 	public static <T extends Comparable<T>>BinNode<T> removeAt(BinNode<T> removeNode, BinNode<T> hot) {
 		// 被删除节点的接替者
 		BinNode<T> succ = null;
-		// 1、左子树为空
+		// 1、找到被删除节点的接替者 succ 节点；
+		// 1）左子树为空
 		if (!BinNode.hasLChild(removeNode)) {
 			succ = removeNode.getRightChild();
-		// 2、左子树不为空，右子树为空
+		// 2）左子树不为空，右子树为空
 		} else if (!BinNode.hasRChild(removeNode)) {
 			succ = removeNode.getLeftChild();
-		// 3、左右子树都存在，使用removeNode的后继来替代
+		// 3）左右子树都存在，使用removeNode的后继来替代
 		} else {
 			BinNode<T> temp = removeNode;
 			removeNode = BinNode.succ(removeNode);
@@ -86,7 +87,7 @@ public abstract class BST<T extends Comparable<T>> extends BinTree<T> {
 			succ = removeNode.getRightChild();
 		}
 
-		// 建立新的父子链接
+		// 2、建立新的父子链接
 		hot = removeNode.getParent();
 		if (hot != null) {
 			if (BinNode.isRightChild(removeNode)) {
@@ -97,6 +98,8 @@ public abstract class BST<T extends Comparable<T>> extends BinTree<T> {
 		}
 		if (succ != null) { succ.setParent(hot); }
 
+		// 3、更新高度
+		updateHeightAbove(hot);
 		return succ;
 	}
 

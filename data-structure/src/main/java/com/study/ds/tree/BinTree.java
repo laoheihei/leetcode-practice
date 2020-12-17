@@ -18,7 +18,7 @@ public class BinTree<T extends Comparable<T>> {
 	 * @param node
 	 * @return
 	 */
-	public int updateHeight(BinNode node) {
+	public static int updateHeight(BinNode node) {
 		if (!hasChild(node)) {
 			return 0;
 		}
@@ -29,7 +29,7 @@ public class BinTree<T extends Comparable<T>> {
 	 * 更新节点x及其祖先的高度；一旦node的高度不变，即可终止更新
 	 * @param node
 	 */
-	public void updateHeightAbove(BinNode node) {
+	public static void updateHeightAbove(BinNode node) {
 		while (node != null) {
 			int previousHeight = node.getHeight();
 			updateHeight(node);
