@@ -31,11 +31,11 @@ public class BinTree<T extends Comparable<T>> {
 	 */
 	public static void updateHeightAbove(BinNode node) {
 		while (node != null) {
-			int previousHeight = node.getHeight();
+			// int previousHeight = node.getHeight();
 			updateHeight(node);
-			if (node.getHeight() == previousHeight) {
-				break;
-			}
+			// if (node.getHeight() == previousHeight) {
+			// 	break;
+			// }
 
 			node = node.getParent();
 		}

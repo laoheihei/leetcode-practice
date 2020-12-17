@@ -38,9 +38,8 @@ public class BST<T extends Comparable<T>> extends BinTree<T> {
 	public boolean remove(T data) {
 		BinNode<T> search = search(data);
 		if (search == null) { return false; }
-		removeAt(search, _hot);
-		// succ可能为 null，所以将updateHeightAbove的调用移植removeAt()方法中
-		// updateHeightAbove(succ.getParent());
+		removeAt(search, this);
+		updateHeightAbove(this._hot);
 		_size--;
 
 		return true;
@@ -57,22 +56,14 @@ public class BST<T extends Comparable<T>> extends BinTree<T> {
 
 		if (BinNode.isLeftChild(parent)) {
 			if (BinNode.isLeftChild(node)) {
-				// 向上链接
-				parent.setParent(grantParent.getParent());
 				return connect34(node, parent, grantParent, node.getLeftChild(), node.getRightChild(), parent.getRightChild(), grantParent.getRightChild());
 			} else {
-				// 向上链接
-				node.setParent(grantParent.getParent());
 				return connect34(parent, node, grantParent, parent.getLeftChild(), node.getLeftChild(), node.getRightChild(), grantParent.getRightChild());
 			}
 		} else {
 			if (BinNode.isRightChild(node)) {
-				// 向上链接
-				parent.setParent(grantParent.getParent());
 				return connect34(grantParent, parent, node, grantParent.getLeftChild(), parent.getLeftChild(), node.getLeftChild(), node.getRightChild());
 			} else {
-				// 向上链接
-				node.setParent(grantParent.getParent());
 				return connect34(grantParent, node, parent, grantParent.getLeftChild(), node.getLeftChild(), node.getRightChild(), parent.getRightChild());
 			}
 		}
@@ -119,11 +110,11 @@ public class BST<T extends Comparable<T>> extends BinTree<T> {
 	 *  3、更新节点高度；
 	 *
 	 * @param removeNode
-	 * @param hot remove节点的父节点
+	 * @param tree 用于传递tree._hot节点
 	 * @param <T>
 	 * @return
 	 */
-	public static <T extends Comparable<T>>BinNode<T> removeAt(BinNode<T> removeNode, BinNode<T> hot) {
+	public static <T extends Comparable<T>>BinNode<T> removeAt(BinNode<T> removeNode, BST<T> tree) {
 		// 被删除节点的接替者
 		BinNode<T> succ = null;
 		// 1、找到被删除节点的接替者 succ 节点；
@@ -142,6 +133,7 @@ public class BST<T extends Comparable<T>> extends BinTree<T> {
 		}
 
 		// 2、建立新的父子链接
+		BinNode<T> hot = tree._hot;
 		hot = removeNode.getParent();
 		if (hot != null) {
 			if (BinNode.isRightChild(removeNode)) {
@@ -152,8 +144,6 @@ public class BST<T extends Comparable<T>> extends BinTree<T> {
 		}
 		if (succ != null) { succ.setParent(hot); }
 
-		// 3、更新高度
-		updateHeightAbove(hot);
 		return succ;
 	}
 
@@ -176,5 +166,13 @@ public class BST<T extends Comparable<T>> extends BinTree<T> {
 		} else {
 			return searchIn(node.getLeftChild(), data, hot);
 		}
+	}
+
+	public BinNode<T> get_hot() {
+		return _hot;
+	}
+
+	public void set_hot(BinNode<T> _hot) {
+		this._hot = _hot;
 	}
 }

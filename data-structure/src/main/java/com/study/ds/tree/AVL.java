@@ -30,9 +30,12 @@ public class AVL<T extends Comparable<T>> extends BST<T> {
 		insert = new BinNode<>(data, this._hot);
 		this._size++;
 
-		for (BinNode p = this._hot; p != null; p = p.getParent()) {
+		for (BinNode<T> p = this._hot; p != null; p = p.getParent()) {
 			if (!avlBalanced(p)) {
-
+				BinNode<T> dummy = new BinNode<>();
+				BinNode.replaceParentChildLink(p, dummy);
+				BinNode<T> succ = rotateAt(BinNode.tallerChild(BinNode.tallerChild(p)));
+				BinNode.replaceParentChildLink(dummy, succ);
 				break;
 			} else {
 				updateHeight(p);
@@ -44,7 +47,23 @@ public class AVL<T extends Comparable<T>> extends BST<T> {
 
 	@Override
 	public boolean remove(T data) {
-		return super.remove(data);
+		BinNode<T> remove = search(data);
+		if (remove == null) { return false; }
+
+		removeAt(remove, this);
+		_size--;
+
+		for (BinNode<T> p = this._hot; p != null; p = p.getParent()) {
+			if (!avlBalanced(p)) {
+				BinNode<T> dummy = new BinNode<>();
+				BinNode.replaceParentChildLink(p, dummy);
+				BinNode<T> succ = rotateAt(BinNode.tallerChild(BinNode.tallerChild(p)));
+				BinNode.replaceParentChildLink(dummy, succ);
+			}
+			// 即使 p 未失衡，高度也可能更新
+			updateHeight(p);
+		}
+		return true;
 	}
 
 

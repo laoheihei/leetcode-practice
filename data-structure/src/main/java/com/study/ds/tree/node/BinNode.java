@@ -17,6 +17,8 @@ public class BinNode<T extends Comparable<T>> implements Node {
 	// Null Path Length（左式堆，也可以用height代替）
 	protected int npl = 1;
 
+	public BinNode() {}
+
 	/**
 	 * 初始化node节点，并构建单向联结（孩子节点的父联结）
 	 * @param data
@@ -134,19 +136,31 @@ public class BinNode<T extends Comparable<T>> implements Node {
 		child.parent = null;
 	}
 
+	/**
+	 * 替换父子的链接
+	 * @param previousChild
+	 * @param currentChild
+	 */
 	public static void replaceParentChildLink(BinNode previousChild, BinNode currentChild) {
+		// 1、建立 子——>父 链接
 		BinNode parent = previousChild.getParent();
-		if (parent == null) {
-			currentChild.setParent(null);
-			return;
-		}
+		currentChild.setParent(parent);
+		if (parent == null) { return; }
 
-		previousChild.setParent(parent);
+		// 2、建立 父——>子 链接
 		if (isLeftChild(previousChild)) {
 			parent.setLeftChild(currentChild);
 		} else {
 			parent.setRightChild(currentChild);
 		}
+	}
+
+	public static <T extends Comparable<T>> BinNode<T> tallerChild(BinNode<T> node) {
+		return
+				getNodeHeight(node.getLeftChild()) > getNodeHeight(node.getRightChild()) ? node.getLeftChild() :
+				getNodeHeight(node.getLeftChild()) < getNodeHeight(node.getRightChild()) ? node.getRightChild() :
+				isLeftChild(node) ? node.getLeftChild() : node.getRightChild();
+
 	}
 
 	public static boolean isRoot(BinNode node) {
