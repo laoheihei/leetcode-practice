@@ -24,7 +24,22 @@ public class AVL<T extends Comparable<T>> extends BST<T> {
 
 	@Override
 	public BinNode<T> insert(T data) {
-		return super.insert(data);
+		BinNode<T> insert = search(data);
+		if (insert != null) { return insert; }
+
+		insert = new BinNode<>(data, this._hot);
+		this._size++;
+
+		for (BinNode p = this._hot; p != null; p = p.getParent()) {
+			if (!avlBalanced(p)) {
+
+				break;
+			} else {
+				updateHeight(p);
+			}
+		}
+
+		return insert;
 	}
 
 	@Override

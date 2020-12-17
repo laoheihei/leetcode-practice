@@ -134,7 +134,20 @@ public class BinNode<T extends Comparable<T>> implements Node {
 		child.parent = null;
 	}
 
+	public static void replaceParentChildLink(BinNode previousChild, BinNode currentChild) {
+		BinNode parent = previousChild.getParent();
+		if (parent == null) {
+			currentChild.setParent(null);
+			return;
+		}
 
+		previousChild.setParent(parent);
+		if (isLeftChild(previousChild)) {
+			parent.setLeftChild(currentChild);
+		} else {
+			parent.setRightChild(currentChild);
+		}
+	}
 
 	public static boolean isRoot(BinNode node) {
 		return node.parent == null;

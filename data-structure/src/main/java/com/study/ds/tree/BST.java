@@ -55,7 +55,27 @@ public class BST<T extends Comparable<T>> extends BinTree<T> {
 		BinNode<T> parent = node.getParent();
 		BinNode<T> grantParent = parent.getParent();
 
-		return null;
+		if (BinNode.isLeftChild(parent)) {
+			if (BinNode.isLeftChild(node)) {
+				// 向上链接
+				parent.setParent(grantParent.getParent());
+				return connect34(node, parent, grantParent, node.getLeftChild(), node.getRightChild(), parent.getRightChild(), grantParent.getRightChild());
+			} else {
+				// 向上链接
+				node.setParent(grantParent.getParent());
+				return connect34(parent, node, grantParent, parent.getLeftChild(), node.getLeftChild(), node.getRightChild(), grantParent.getRightChild());
+			}
+		} else {
+			if (BinNode.isRightChild(node)) {
+				// 向上链接
+				parent.setParent(grantParent.getParent());
+				return connect34(grantParent, parent, node, grantParent.getLeftChild(), parent.getLeftChild(), node.getLeftChild(), node.getRightChild());
+			} else {
+				// 向上链接
+				node.setParent(grantParent.getParent());
+				return connect34(grantParent, node, parent, grantParent.getLeftChild(), node.getLeftChild(), node.getRightChild(), parent.getRightChild());
+			}
+		}
 	}
 
 	/**
