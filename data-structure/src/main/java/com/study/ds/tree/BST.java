@@ -59,6 +59,40 @@ public class BST<T extends Comparable<T>> extends BinTree<T> {
 	}
 
 	/**
+	 * 按照 “3 + 4” 结构，联结 3 个节点和 4 颗子树
+	 * @param a1
+	 * @param a2
+	 * @param a3
+	 * @param b1
+	 * @param b2
+	 * @param b3
+	 * @param b4
+	 * @return
+	 */
+	public BinNode<T> connect34(BinNode<T> a1, BinNode<T> a2, BinNode<T> a3,
+	                            BinNode<T> b1, BinNode<T> b2, BinNode<T> b3, BinNode<T> b4) {
+		a1.setLeftChild(b1);
+		if (b1 != null) { b1.setParent(a1); }
+
+		a1.setRightChild(b2);
+		if (b2 != null) { b2.setParent(a1); }
+		updateHeight(a1);
+
+		a3.setLeftChild(b3);
+		if (b3 != null) { b3.setParent(a3); }
+
+		a3.setRightChild(b4);
+		if (b4 != null) { b4.setParent(a3); }
+		updateHeight(b4);
+
+		a2.setLeftChild(a1); a1.setParent(a2);
+		a2.setRightChild(a3); a3.setParent(a2);
+		updateHeight(a2);
+
+		return a2;
+	}
+
+	/**
 	 * 流程：
 	 *  1、找到被删除节点的接替者 succ 节点；
 	 *  2、建立 hot 节点和 succ 节点的联系；
