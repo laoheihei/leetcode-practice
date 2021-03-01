@@ -51,7 +51,7 @@ public class BST<T extends Comparable<T>> extends BinTree<T> {
 	 * @param node node为非空的孙辈节点
 	 * @return
 	 */
-	public BinNode<T> rotateAt(BinNode<T> node) {
+	protected BinNode<T> rotateAt(BinNode<T> node) {
 		BinNode<T> parent = node.getParent();
 		BinNode<T> grantParent = parent.getParent();
 
@@ -81,7 +81,7 @@ public class BST<T extends Comparable<T>> extends BinTree<T> {
 	 * @param b4
 	 * @return
 	 */
-	public BinNode<T> connect34(BinNode<T> a1, BinNode<T> a2, BinNode<T> a3,
+	protected BinNode<T> connect34(BinNode<T> a1, BinNode<T> a2, BinNode<T> a3,
 	                            BinNode<T> b1, BinNode<T> b2, BinNode<T> b3, BinNode<T> b4) {
 		a1.setLeftChild(b1);
 		if (b1 != null) { b1.setParent(a1); }
